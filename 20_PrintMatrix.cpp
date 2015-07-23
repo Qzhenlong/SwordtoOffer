@@ -11,6 +11,8 @@ using namespace std;
 1）先走列指针j,当j走到头时，i开始走，当i增到头时，j开始往回走，j走到头时，i开始往回
 2）每次j回到出发起点时，将行列边界往中间压缩，low++， up--;
 3) 直到low == up， 打印结束
+
+注：矩阵还是有可能行列不相等，如LeetCode中的Spiral Matrix一题，思路只是定义上下边界即可
 */
 
 class Solution{
@@ -38,6 +40,28 @@ public:
 			j = low;
 		}
 	}
+	//补充
+    vector<int> spiralOrder(vector<vector<int > >& matrix) {
+		vector<int > ans;
+		if(matrix.size() == 0) return ans;
+		int i = 0, j = 0, rlow = 0, clow = 0, m = matrix.size(), n = matrix[0].size();
+		while(rlow < m && clow < n){
+		    rlow++;                                        //行边界增大
+			while(j < n) ans.push_back(matrix[i][j++]);    //先走上边沿
+			--j; ++i; 									   //避免重复
+			if(j < clow || i < rlow) break;                //行列不相等的矩阵，可能提前到达终点
+			while(i < m) ans.push_back(matrix[i++][j]);    //再走右边沿
+			--i; --j;                                      //避免重复
+			if(j < clow || i < rlow) break;                //行列不相等的矩阵，可能提前到达终点
+			while(j >= clow) ans.push_back(matrix[i][j--]);//再走下边沿
+			++j; --i; 									   //避免重复
+			while(i >= rlow) ans.push_back(matrix[i--][j]);//再走左边沿
+			clow++; 									   //列边界增加
+			m--; n--;                     			       //压缩边界
+			i = rlow; j = clow; 						   //重置起点
+		}
+		return ans;
+    }
 };
 int main()
 {
